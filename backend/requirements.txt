@@ -1,0 +1,8 @@
+flask
+flask-cors
+numpy
+scikit-learn
+PyJWT
+pandas
+openpyxl
+mysql-connector-python

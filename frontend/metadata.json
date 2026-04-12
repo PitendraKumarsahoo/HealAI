@@ -1,0 +1,5 @@
+{
+  "name": "HealAI: Disease Prediction Suite",
+  "description": "A high-fidelity health diagnostic simulation using Gemini AI to analyze clinical parameters for Diabetes, Heart, Kidney, and Liver conditions.",
+  "requestFramePermissions": []
+}
