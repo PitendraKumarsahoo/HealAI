@@ -1,0 +1,23 @@
+# Large files
+query.zip
+query
+
+# Environment variables
+*.local
+.env
+
+# Logs
+logs
+*.log
+
+# Node
+node_modules
+
+# Python
+__pycache__
+*.pyc
+
+# Editor
+.vscode
+.idea
+.DS_Store
