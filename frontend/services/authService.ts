@@ -1,5 +1,5 @@
 const API_URL = ((import.meta as any)?.env?.VITE_API_URL || "http://127.0.0.1:5000").replace(/\/$/, "");
-console.log("API_URL being used:", API_URL); // Add this log to debug
+console.log("API_URL being used:", API_URL); // Debug log for Vercel deployment
 
 export const register = async (name: string, email: string, password: string) => {
   const res = await fetch(`${API_URL}/auth/register`, {
