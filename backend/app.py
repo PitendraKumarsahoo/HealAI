@@ -24,6 +24,60 @@ CORS(app)
 JWT_SECRET = os.environ.get("JWT_SECRET", "dev-secret")
 DB_PATH = os.environ.get("DB_PATH", "healai.db")
 
+# Database setup function
+def setup_database():
+    if not os.path.exists(DB_PATH):
+        print(f"Creating database {DB_PATH}...")
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        
+        # Create users table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'USER',
+            is_active INTEGER NOT NULL DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        # Create predictions table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS predictions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            disease TEXT NOT NULL,
+            prediction INTEGER NOT NULL,
+            probability REAL NOT NULL,
+            patient_name TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+        """)
+        
+        # Seed Admin
+        admin_email = 'admin@healai.com'
+        cursor.execute("SELECT id FROM users WHERE email=?", (admin_email,))
+        if not cursor.fetchone():
+            print("Seeding admin user...")
+            pwd_hash = generate_password_hash('admin123')
+            cursor.execute(
+                "INSERT INTO users (name, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)",
+                ("System Admin", admin_email, pwd_hash, "ADMIN", 1)
+            )
+            conn.commit()
+            print("Admin user seeded.")
+        
+        conn.commit()
+        conn.close()
+        print("Database setup completed!")
+
+# Initialize database on app startup
+setup_database()
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"}), 200
